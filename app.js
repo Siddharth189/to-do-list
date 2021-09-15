@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true});
+mongoose.connect("mongodb+srv://admin-siddharth:test123@cluster0.ka15f.mongodb.net/myFirstDatabase?retryWrites=true&w=majority/todolistDB", {useNewUrlParser: true});
 
 const itemsSchema = {
   name: String
@@ -88,23 +88,24 @@ app.get("/:customListName", function(req, res){
 
 });
 
-app.post("/", function(req, res){
-
-  const itemName = req.body.newItem;
-  const listName = req.body.list;
-
+app.post("/",function(req,res){
+  var listName = req.body.list;
+  var listNameString = listName.trim();
+  const newItem = req.body.newItem;
+  
   const item = new Item({
-    name: itemName
-  });
-
-  if (listName === "Today"){
+      name : newItem
+      });
+ 
+  if(listNameString=="Today"){
     item.save();
     res.redirect("/");
-  } else {
-    List.findOne({name: listName}, function(err, foundList){
-      foundList.items.push(item);
-      foundList.save();
-      res.redirect("/" + listName);
+  }else{
+    List.findOne({name:listName},function(err,docs){
+      const items= docs.items;
+      items.push(item);
+      docs.save();
+      res.redirect("/"+listName);
     });
   }
 });
@@ -136,6 +137,9 @@ app.get("/about", function(req, res){
 });
 
 let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
 app.listen(port, function() {
-  console.log("Server started on port 3000");
+  console.log("Server started on port: " + port);
 });
