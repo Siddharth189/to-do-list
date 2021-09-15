@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://admin-siddharth:test123@cluster0.ka15f.mongodb.net/myFirstDatabase?retryWrites=true&w=majority/todolistDB", {useNewUrlParser: true});
+mongoose.connect("mongodb+srv://admin-siddharth:test123@cluster0.ka15f.mongodb.net/todolistDB", {useNewUrlParser: true});
 
 const itemsSchema = {
   name: String
@@ -116,16 +116,17 @@ app.post("/delete", function(req, res){
 
   if (listName === "Today") {
     Item.findByIdAndRemove(checkedItemId, function(err){
-      if (!err) {
-        console.log("Successfully deleted checked item.");
-        res.redirect("/");
+      if (err) {
+        return ;
       }
+      console.log("Successfully deleted checked item.");
+      res.redirect("/");
     });
   } else {
     List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList){
-      if (!err){
+      // if (!err){
         res.redirect("/" + listName);
-      }
+      // }
     });
   }
 
