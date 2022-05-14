@@ -1,6 +1,4 @@
-# to-do-list
-
-## Description
+## to-do-list
 A complete and customizable to-do list
 
 
